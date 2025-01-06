@@ -1,6 +1,6 @@
 1. WHAT TO KEEP:
--Ensure you keep the following files and directories, as they are crucial for training and deploying your custom object detection model:
-- Models/ Directory: Contains model architecture definitions. You'll need these to define and modify your model's structure.
+
+-Models/ Directory: Contains model architecture definitions. You'll need these to define and modify your model's structure.
 -data/ Directory: Houses dataset configuration files (e.g., .yaml files) that specify paths to your training, validation, and test datasets, as well as class names. Customize these files to point to your datasets.
 -train.py: The main script for training your model. You'll use this to initiate the training process.
 -detect.py: Used for running inference with your trained model. This script allows you to test your model on new images or videos.
