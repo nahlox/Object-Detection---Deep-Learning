@@ -1,6 +1,3 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
-"""Common modules."""
-
 import ast
 import contextlib
 import json
@@ -477,7 +474,21 @@ class DetectMultiBackend(nn.Module):
 
         super().__init__()
         w = str(weights[0] if isinstance(weights, list) else weights)
-        pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle, triton = self._model_type(w)
+        # Manually determine the model type based on file extensions or logic
+        pt = w.endswith(".pt")
+        jit = w.endswith(".torchscript")    
+        onnx = w.endswith(".onnx")
+        xml = w.endswith(".xml")
+        engine = w.endswith(".engine")
+        coreml = w.endswith(".mlpackage")
+        saved_model = w.endswith("_saved_model")
+        pb = w.endswith(".pb")
+        tflite = w.endswith(".tflite") and not w.endswith("_edgetpu.tflite")
+        edgetpu = w.endswith("_edgetpu.tflite")
+        tfjs = w.endswith(".tfjs")
+        paddle = w.endswith("_paddle_model")
+        triton = False  # Triton inference server (not supported in this case)
+
         fp16 &= pt or jit or onnx or engine or triton  # FP16
         nhwc = coreml or saved_model or pb or tflite or edgetpu  # BHWC formats (vs torch BCWH)
         stride = 32  # default stride
@@ -769,26 +780,8 @@ class DetectMultiBackend(nn.Module):
             im = torch.empty(*imgsz, dtype=torch.half if self.fp16 else torch.float, device=self.device)  # input
             for _ in range(2 if self.jit else 1):  #
                 self.forward(im)  # warmup
-
     @staticmethod
-    def _model_type(p="path/to/model.pt"):
-        """
-        Determines model type from file path or URL, supporting various export formats.
 
-        Example: path='path/to/model.onnx' -> type=onnx
-        """
-        # types = [pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle]
-        from export import export_formats
-        from utils.downloads import is_url
-
-        sf = list(export_formats().Suffix)  # export suffixes
-        if not is_url(p, check=False):
-            check_suffix(p, sf)  # checks
-        url = urlparse(p)  # if url may be Triton inference server
-        types = [s in Path(p).name for s in sf]
-        types[8] &= not types[9]  # tflite &= not edgetpu
-        triton = not any(types) and all([any(s in url.scheme for s in ["http", "grpc"]), url.netloc])
-        return types + [triton]
 
     @staticmethod
     def _load_metadata(f=Path("path/to/meta.yaml")):

@@ -1,11 +1,3 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
-"""
-YOLO-specific modules.
-
-Usage:
-    $ python models/yolo.py --cfg yolov5s.yaml
-"""
-
 import argparse
 import contextlib
 import math
@@ -315,11 +307,7 @@ class DetectionModel(BaseModel):
         return y
 
     def _initialize_biases(self, cf=None):
-        """
-        Initializes biases for YOLOv5's Detect() module, optionally using class frequencies (cf).
-
-        For details see https://arxiv.org/abs/1708.02002 section 3.3.
-        """
+    
         # cf = torch.bincount(torch.tensor(np.concatenate(dataset.labels, 0)[:, 0]).long(), minlength=nc) + 1.
         m = self.model[-1]  # Detect() module
         for mi, s in zip(m.m, m.stride):  # from
@@ -335,7 +323,7 @@ Model = DetectionModel  # retain YOLOv5 'Model' class for backwards compatibilit
 
 
 class SegmentationModel(DetectionModel):
-    """YOLOv5 segmentation model for object detection and segmentation tasks with configurable parameters."""
+   
 
     def __init__(self, cfg="yolov5s-seg.yaml", ch=3, nc=None, anchors=None):
         """Initializes a YOLOv5 segmentation model with configurable params: cfg (str) for configuration, ch (int) for channels, nc (int) for num classes, anchors (list)."""
