@@ -1,4 +1,3 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
 import argparse
 import json
 import os
